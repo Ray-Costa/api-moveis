@@ -1,16 +1,14 @@
-import {QueryResult} from 'pg';
-
 interface IMoviesRequest{
-
   name: string;
   description: string;
   duration: number;
   price:number;
 }
+
 interface IMovies extends IMoviesRequest {
   id: number
 }
 
-type moviesResult = QueryResult<IMovies>
+ type MoviesRequiredKeys = "name";
 
-export {IMovies, IMoviesRequest, moviesResult}
+export {IMovies, IMoviesRequest, MoviesRequiredKeys}
