@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { client } from './database';
 import { IMovies, IMoviesRequest } from './interfaces';
+import { QueryConfig } from 'pg';
+import { string } from 'pg-format';
 
 const createMovies = async (request: Request, response: Response, next: NextFunction): Promise<Response | void> => {
   try {
@@ -22,11 +24,28 @@ const createMovies = async (request: Request, response: Response, next: NextFunc
 const listMovies = async (request: Request, response: Response, next: NextFunction): Promise<Response | void> => {
   try {
 
+    let perPage: any = request.query.perPage === undefined ? 5 : request.query.perPage
+    let page: any = request.query.page === undefined ? 0 : request.query.page
+
+    if(page < 0 || !Number(page)){
+      page = 1
+    }
+
+    if( perPage < 0 || perPage > 5 || !Number(perPage)){
+     perPage = 5
+    }
+
     const query: string = `
         SELECT *
-        FROM movies;
+        FROM movies LIMIT $1
+        OFFSET $2;
     `
-    const queryResult = await client.query<IMovies>(query)
+
+    const queryConfig: QueryConfig = {
+      text: query,
+      values: [perPage, Number(perPage) * (Number(page) - 1)]
+    }
+    const queryResult = await client.query<IMovies>(queryConfig)
 
     return response.status(200).json(queryResult.rows)
   } catch (err) {
