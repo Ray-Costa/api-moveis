@@ -1,6 +1,6 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
 import { startDatabase } from './database';
-import { createMovies, listMovies } from './logic';
+import { createMovies, listMovies,updateMovies,deleteMovies } from './logic';
 import { DatabaseError } from 'pg';
 import { handlePostgresDatabaseError, handleUnknownError } from './middlewares';
 
@@ -10,6 +10,8 @@ app.use(express.json());
 
 app.post('/movies', createMovies);
 app.get('/movies', listMovies);
+app.patch('/movies/:id',updateMovies)
+app.delete('/movies/:id',deleteMovies)
 
 
 app.use(handlePostgresDatabaseError);

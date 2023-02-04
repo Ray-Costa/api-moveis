@@ -11,4 +11,12 @@ interface IMovies extends IMoviesRequest {
 
  type MoviesRequiredKeys = "name";
 
-export {IMovies, IMoviesRequest, MoviesRequiredKeys}
+interface Pagination {
+  previousPage: string | null;
+  nextPage: string | null;
+  count: number;
+  data: IMoviesRequest[];
+
+}
+
+export {IMovies, IMoviesRequest, MoviesRequiredKeys, Pagination}
