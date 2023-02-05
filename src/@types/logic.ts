@@ -100,11 +100,18 @@ const listMovies = async (request: Request, response: Response, next: NextFuncti
 const updateMovies = async (request: Request, response: Response, next: NextFunction): Promise<Response | void> => {
   try {
 
-    const newMovies: IMovies = request.body;
+    const newMovieData: IMovies = request.body;
 
     const idMovies: string = request.params.id;
 
-    const valuesMovies = Object.values(newMovies)
+    const getMovieQuery = `SELECT *
+                           FROM movies
+                           WHERE id = $1`;
+
+    const movieResponse = await client.query(getMovieQuery, [idMovies]);
+    const movie = movieResponse.rows[0];
+
+    const valuesMovies: IMoviesRequest = { ...movie, ...newMovieData };
 
     const querystring: string = `
         UPDATE movies
@@ -118,9 +125,9 @@ const updateMovies = async (request: Request, response: Response, next: NextFunc
 
     const queryConfig: QueryConfig = {
       text: querystring,
-      values: [...valuesMovies, idMovies]
-
+      values: [valuesMovies.name, valuesMovies.description, valuesMovies.duration, valuesMovies.price, idMovies]
     }
+
     const queryResult = await client.query<IMovies>(queryConfig)
 
     return response.status(200).json(queryResult.rows[0])
