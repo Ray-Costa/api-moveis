@@ -257,3 +257,7 @@ Esse serviço precisa possuir uma API REST para que os demais serviços consigam
   "message": "Movie not found."
 }
 ```
+
+# Schema do banco de dados
+
+![alt text](./schema%20movies.png)

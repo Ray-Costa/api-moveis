@@ -1,3 +1,5 @@
+import { QueryResult } from 'pg';
+
 interface IMoviesRequest{
   name: string;
   description: string;
@@ -18,5 +20,6 @@ interface Pagination {
   data: IMoviesRequest[];
 
 }
+type MoviesResult = QueryResult<IMovies>
 
-export {IMovies, IMoviesRequest, MoviesRequiredKeys, Pagination}
+export {IMovies, IMoviesRequest, MoviesRequiredKeys, Pagination, MoviesResult}

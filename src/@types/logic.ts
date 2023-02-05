@@ -98,46 +98,57 @@ const listMovies = async (request: Request, response: Response, next: NextFuncti
 }
 
 const updateMovies = async (request: Request, response: Response, next: NextFunction): Promise<Response | void> => {
+  try {
 
-  const newMovies: IMovies = request.body;
-  const idMovies: string = request.params.id;
-  const valuesMovies = Object.values(newMovies)
-  const querystring: string = `
-      UPDATE movies
-      SET name        = $1,
-          description = $2,
-          duration    = $3,
-          price       = $4
-      WHERE id = $5 RETURNING *;
+    const newMovies: IMovies = request.body;
 
-  `
-  const queryConfig: QueryConfig = {
-    text: querystring,
-    values: [...valuesMovies, idMovies]
+    const idMovies: string = request.params.id;
 
+    const valuesMovies = Object.values(newMovies)
+
+    const querystring: string = `
+        UPDATE movies
+        SET name        = $1,
+            description = $2,
+            duration    = $3,
+            price       = $4
+        WHERE id = $5 RETURNING *;
+
+    `
+
+    const queryConfig: QueryConfig = {
+      text: querystring,
+      values: [...valuesMovies, idMovies]
+
+    }
+    const queryResult = await client.query<IMovies>(queryConfig)
+
+    return response.status(200).json(queryResult.rows[0])
+  } catch (err) {
+    return next(err);
   }
-  const queryResult = await client.query<IMovies>(queryConfig)
-
-  return response.status(200).json(queryResult.rows[0])
 }
 
 const deleteMovies = async (request: Request, response: Response, next: NextFunction): Promise<Response | void> => {
+  try {
 
-  const idDeleteMovies: string = request.params.id
-  const queryString: string = `
-      DELETE
-      FROM movies
-      WHERE id = $1
-  `
-  const queryConfig: QueryConfig = {
-    text: queryString,
-    values: [idDeleteMovies]
+    const idDeleteMovies: string = request.params.id
+    const queryString: string = `
+        DELETE
+        FROM movies
+        WHERE id = $1
+    `
+    const queryConfig: QueryConfig = {
+      text: queryString,
+      values: [idDeleteMovies]
+    }
+
+    await client.query<IMovies>(queryConfig)
+
+    return response.status(200).json();
+  } catch (err) {
+    return next(err);
   }
-
-  await client.query<IMovies>(queryConfig)
-
-  return response.status(200).json();
-
 }
 
 export {

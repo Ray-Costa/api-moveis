@@ -2,7 +2,7 @@ import express, { Application, NextFunction, Request, Response } from 'express';
 import { startDatabase } from './database';
 import { createMovies, listMovies,updateMovies,deleteMovies } from './logic';
 import { DatabaseError } from 'pg';
-import { handlePostgresDatabaseError, handleUnknownError } from './middlewares';
+import { handlePostgresDatabaseError, handleUnknownError,ensuteMoviesExists } from './middlewares';
 
 const app: Application = express();
 
@@ -10,8 +10,8 @@ app.use(express.json());
 
 app.post('/movies', createMovies);
 app.get('/movies', listMovies);
-app.patch('/movies/:id',updateMovies)
-app.delete('/movies/:id',deleteMovies)
+app.patch('/movies/:id',ensuteMoviesExists,updateMovies)
+app.delete('/movies/:id',ensuteMoviesExists,deleteMovies)
 
 
 app.use(handlePostgresDatabaseError);
